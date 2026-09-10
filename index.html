@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<!-- 声明HTML5文档类型 -->
+<html lang="zh-CN">
+<!-- 设置页面语言为简体中文 -->
+
+<head>
+    <!-- 页面元数据 -->
+    <meta charset="UTF-8">
+    <!-- 设置字符编码为UTF-8，支持中文显示 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 设置响应式视口，适配移动设备 -->
+    <title>国家舆情实验室系统网站入口</title>
+    <!-- 页面标题 -->
+
+    <style>
+        /* ===================================
+           全局样式重置
+           =================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            /* 使用边框盒模型，padding和border包含在width/height内 */
+        }
+
+        /* ===================================
+           页面主体样式
+           =================================== */
+        body {
+            min-height: 100vh;
+            /* 最小高度为视口高度 */
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            /* 字体栈：优先使用微软雅黑，苹方，回退到Arial */
+            background: #f5f7fa;
+            /* 浅灰色背景 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Flex布局：水平和垂直居中 */
+            padding: 40px 20px;
+            position: relative;
+            /* 为绝对定位元素提供定位上下文 */
+        }
+
+        /* ===================================
+           CUC Logo - 右上角定位
+           =================================== */
+        /* 右上角 CUC Logo */
+        .cuc-logo {
+            position: fixed;
+            /* 固定定位，相对于视口 */
+            top: 20px;
+            left: 30px;
+            /* 右上角位置 */
+        }
+
+        .cuc-logo:hover {
+            opacity: 1;
+            /* 悬停时显示为完全不透明 */
+        }
+
+        .container {
+            width: 960px;
+            max-width: 95%;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .title h1 {
+            font-size: 38px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #1a1a2e, #667eea, #1a1a2e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+        }
+
+        .title p {
+            font-size: 16px;
+            color: #6b7280;
+            position: relative;
+            display: inline-block;
+            padding: 0 20px;
+        }
+
+        .title p::before,
+        .title p::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40px;
+            height: 1px;
+            background: #d1d5db;
+            /* 装饰线颜色 - 浅灰色 */
+        }
+
+        .title p::before {
+            right: 100%;
+            margin-right: 15px;
+            /* 左侧装饰线位置 */
+        }
+
+        .title p::after {
+            left: 100%;
+            margin-left: 15px;
+            /* 右侧装饰线位置 */
+        }
+
+        /* ===================================
+           网站卡片网格布局
+           =================================== */
+        .website-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            /* 3列等宽网格布局 */
+            gap: 28px;
+            /* 卡片间距 */
+        }
+
+        /* ===================================
+           网站卡片样式
+           =================================== */
+        .website-card {
+            height: 190px;
+            background: #fff;
+            /* 白色背景 */
+            border-radius: 16px;
+            /* 圆角边框 */
+            display: flex;
+            flex-direction: column;
+            /* 垂直排列子元素 */
+            justify-content: center;
+            align-items: center;
+            /* Flex居中：水平和垂直 */
+            text-decoration: none;
+            /* 移除链接下划线 */
+            color: #222;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            /* 柔和阴影效果 */
+            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+            /* 平滑过渡动画 */
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            /* 淡灰色边框 */
+            animation: fadeInUp 0.6s ease forwards;
+            /* 入场动画引用 */
+            opacity: 0;
+            /* 初始透明，由动画控制显示 */
+        }
+
+        /* ===================================
+           卡片入场动画
+           =================================== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+                /* 初始位置：向下偏移20px */
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                /* 最终位置：回到原位，完全不透明 */
+            }
+        }
+
+        /* ===================================
+           卡片悬停效果
+           =================================== */
+        .website-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            /* 向上浮动8px并放大2% */
+            box-shadow: 0 20px 50px rgba(102, 126, 234, 0.3);
+            /* 悬停时增强阴影效果 */
+        }
+
+        .website-card:hover::before {
+            opacity: 1;
+            /* 悬停时显示顶部装饰条 */
+        }
+
+        /* ===================================
+           图标样式
+           =================================== */
+        .icon {
+            width: 62px;
+            height: 62px;
+            border-radius: 50%;
+            /* 圆形图标 */
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            /* 渐变背景 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Flex居中图标内容 */
+            font-size: 28px;
+            margin-bottom: 16px;
+            /* 图标阴影 */
+        }
+
+        .icon img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            /* 图片保持原始比例 */
+        }
+
+        .website-card:hover .icon {
+            transform: scale(1.1);
+            /* 悬停时图标放大10% */
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.25);
+            /* 悬停时增强阴影 */
+        }
+
+        /* ===================================
+           网站名称和描述样式
+           =================================== */
+        .website-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a2e;
+            transition: color 0.3s ease;
+            /* 颜色过渡动画 */
+        }
+
+        .website-card:hover .website-name {
+            color: #667eea;
+            /* 悬停时变为紫色 */
+        }
+
+        .website-description {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #6b7280;
+            transition: color 0.3s ease;
+        }
+
+        .website-card:hover .website-description {
+            color: #8b8fa3;
+            /* 悬停时描述文字颜色变化 */
+        }
+
+        /* ===================================
+           响应式设计 - 平板设备 (≤750px)
+           =================================== */
+        @media (max-width: 750px) {
+            .website-grid {
+                grid-template-columns: repeat(2, 1fr);
+                /* 改为2列布局 */
+                gap: 20px;
+                /* 减小间距 */
+            }
+
+            .title h1 {
+                font-size: 30px;
+                /* 减小标题字号 */
+            }
+        }
+
+        /* ===================================
+           响应式设计 - 移动设备 (≤480px)
+           =================================== */
+        @media (max-width: 480px) {
+            .website-grid {
+                grid-template-columns: 1fr;
+                /* 改为单列布局 */
+                gap: 16px;
+                /* 进一步减小间距 */
+            }
+
+            .website-card {
+                height: 150px;
+                /* 减小卡片高度 */
+            }
+
+            .title h1 {
+                font-size: 26px;
+                /* 进一步减小标题字号 */
+            }
+
+            .title p::before,
+            .title p::after {
+                width: 20px;
+                /* 减小装饰线长度 */
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===================================
+         页面主要内容区域
+         =================================== -->
+
+    <!-- CUC Logo - 右上角固定定位图标 -->
+    <img src="cuc-logo.svg" alt="CUC" class="cuc-logo">
+
+    <!-- 主内容容器 -->
+    <div class="container">
+
+        <!-- 页面标题区域 -->
+        <div class="title">
+            <h1>国家舆情实验室系统网站入口</h1>
+            <!-- 主标题 -->
+            <p>选择需要访问的网站</p>
+            <!-- 副标题，两侧有装饰线 -->
+        </div>
+
+        <!-- 网站卡片网格容器 -->
+        <div class="website-grid">
+
+            <!-- 网站 1 - 白杨舆情系统 -->
+            <a class="website-card" href="https://mcc.cuc.edu.cn/xby/login.html" target="_blank">
+                <img src="logo.svg" alt="该图片无法显示" class="icon">
+                <div class="website-name">白杨舆情系统</div>
+                <div class="website-description">简要介绍</div>
+            </a>
+
+            <!-- 网站 2 - 问道中传 (中传AI助手) -->
+            <a class="website-card"
+                href="https://aihub.cuc.edu.cn/?code=R0xTb8He3cub50Doixhk57okFBL0D07jJDvCFbW9znRjbBKIJVNUz6jTgSvUXDbVrVUPcsC4VUDMYaLvg3eDWiJJsJGUgq0r0bHN7JY0OqL7VCnNVk1aAKGRWYzfkgxt&state=UwiM7K&sid=F66B4D49EA2DF8FC847D05136B8E0E88#/robot/zcDialogue?id=65eafbc5b9f941d29d47706880cb1c73"
+                target="_blank">
+                <img src="CUC_ai.png" alt="该图片无法显示" class="icon">
+                <div class="website-name">问道中传</div>
+                <div class="website-description">中传AI助手</div>
+            </a>
+
+            <!-- 网站 3 - Meltwater融文平台 (新闻分析) -->
+            <a class="website-card" href="https://www.meltwater.cn/" target="_blank">
+                <img src="mw_logo.svg" alt="该图片无法显示" class="icon">
+                <div class="website-name">Meltwater融文平台</div>
+                <div class="website-description">新闻分析平台</div>
+            </a>
+
+            <!-- 网站 4 -->
+            <a class="website-card" target="_blank">
+                <div class="icon">📱</div>
+                <!-- Emoji图标 -->
+                <div class="website-name">系统4</div>
+                <div class="website-description">简要介绍</div>
+            </a>
+
+            <!-- 网站 5 -->
+            <a class="website-card" target="_blank">
+                <div class="icon">▶️</div>
+                <!-- Emoji图标 -->
+                <div class="website-name">系统5</div>
+                <div class="website-description">简要介绍</div>
+            </a>
+
+            <!-- 网站 6 -->
+            <a class="website-card" target="_blank">
+                <div class="icon">📚</div>
+                <!-- Emoji图标 -->
+                <div class="website-name">系统6</div>
+                <div class="website-description">简要介绍</div>
+            </a>
+
+        </div>
+        <!-- .website-grid 结束 -->
+    </div>
+    <!-- .container 结束 -->
+
+</body>
+
+</html>
