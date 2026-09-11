@@ -1,0 +1,647 @@
+<!--
+  文件: 实验室入口网页.html
+  描述: 国家舆情实验室系统入口页面
+  功能: 展示各个系统的入口卡片，支持系统管理和添加新系统
+  日期: 2026年9月
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>国家舆情实验室-系统入口</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f8fafc;
+            color: #1a1a2e;
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* ===== 顶部导航栏 ===== */
+        .header {
+            background: #0f3d7d;
+            height: 92px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            box-shadow: 0 4px 20px rgba(15, 44, 92, 0.25);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo img {
+            height: 64px;
+            width: auto;
+            display: block;
+        }
+
+        .header-title h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .header-title span {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 4px;
+            display: block;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            transition: all 0.25s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .nav-btn.primary {
+            background: #2b6cb0;
+            border-color: #2b6cb0;
+            box-shadow: 0 4px 12px rgba(43, 108, 176, 0.35);
+        }
+
+        .nav-btn.primary:hover {
+            background: #3b7bc9;
+            box-shadow: 0 6px 16px rgba(43, 108, 176, 0.45);
+        }
+
+        /* ===== 主内容区 ===== */
+        .main {
+            max-width: 1000px;
+            margin: 32px auto 48px;
+            padding: 0 24px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 22px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(10, 32, 69, 0.06);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #1a3a6e, #2b6cb0);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px rgba(26, 58, 110, 0.14);
+            border-color: #d6e4f5;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        /* 图标容器 - 圆形 */
+        .card-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            overflow: hidden;
+            background: #f0f7ff;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover .card-icon {
+            transform: scale(1.06);
+        }
+
+        .card-icon img {
+            max-width: 68%;
+            max-height: 68%;
+            object-fit: contain;
+        }
+
+        /* 空图标占位 */
+        .card-icon.empty {
+            background: #f8fafc;
+            border: 1.5px dashed #cbd5e1;
+            position: relative;
+        }
+
+        .card-icon.empty::after {
+            content: "";
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: #e2e8f0;
+            opacity: 0.7;
+        }
+
+        .card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a3a6e;
+            margin-bottom: 10px;
+            letter-spacing: 0.3px;
+        }
+
+        .card p {
+            font-size: 13.5px;
+            color: #64748b;
+            line-height: 1.65;
+            max-width: 260px;
+        }
+
+        /* ===== 弹窗样式 ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 44, 92, 0.45);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: #ffffff;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 720px;
+            max-height: 85vh;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+            animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: translateY(24px) scale(0.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            padding: 22px 28px;
+            border-bottom: 1px solid #eef2f7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fafbfc;
+        }
+
+        .modal-header h2 {
+            font-size: 18px;
+            color: #1a3a6e;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #94a3b8;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #1a3a6e;
+        }
+
+        .modal-body {
+            padding: 24px 28px;
+            overflow-y: auto;
+            max-height: calc(85vh - 140px);
+        }
+
+        .modal-footer {
+            padding: 18px 28px;
+            border-top: 1px solid #eef2f7;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background: #fafbfc;
+        }
+
+        .manage-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .manage-table th,
+        .manage-table td {
+            padding: 13px 14px;
+            text-align: left;
+            border-bottom: 1px solid #eef2f7;
+            font-size: 14px;
+        }
+
+        .manage-table th {
+            background: #f8fafc;
+            color: #475569;
+            font-weight: 600;
+        }
+
+        .btn-delete {
+            background: #fef2f2;
+            color: #dc2626;
+            border: none;
+            padding: 5px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-delete:hover {
+            background: #fee2e2;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: #374151;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+            background: #fafbfc;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #2b6cb0;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.12);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-cancel:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-confirm {
+            background: #1a3a6e;
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            background: #254a8a;
+        }
+
+        /* 响应式 */
+        @media (max-width: 960px) {
+            .card-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .header {
+                height: auto;
+                padding: 16px 20px;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main {
+                margin-top: 32px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">
+                <img src="cuc-logo-白.png" alt="中国传媒大学">
+            </div>
+            <div class="header-title">
+                <h1>国家舆情实验室-系统入口</h1>
+                <span>选择需要访问的网站</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="nav-btn" onclick="openManageModal()">
+                ⚙️ 系统管理
+            </button>
+            <button class="nav-btn primary" onclick="openAddModal()">
+                + 添加新系统
+            </button>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="main">
+        <div class="card-grid" id="cardGrid"></div>
+    </main>
+
+    <!-- 系统管理弹窗 -->
+    <div class="modal-overlay" id="manageModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>系统管理</h2>
+                <button class="modal-close" onclick="closeManageModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <table class="manage-table">
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>系统名称</th>
+                            <th>简介</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="manageTableBody"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeManageModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加新系统弹窗 -->
+    <div class="modal-overlay" id="addModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>添加新系统</h2>
+                <button class="modal-close" onclick="closeAddModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>系统名称</label>
+                    <input type="text" id="newName" placeholder="请输入系统名称">
+                </div>
+                <div class="form-group">
+                    <label>系统简介</label>
+                    <textarea id="newDesc" placeholder="请输入系统简介"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>图标文件名（可选）</label>
+                    <input type="text" id="newIcon" placeholder="例如：logo.svg">
+                </div>
+                <div class="form-group">
+                    <label>系统链接（可选）</label>
+                    <input type="text" id="newLink" placeholder="例如：https://example.com">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeAddModal()">取消</button>
+                <button class="btn btn-confirm" onclick="addSystem()">确认添加</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 系统数据
+        let systems = [
+            {
+                id: 1,
+                name: "白杨舆情系统",
+                desc: "实时监测舆情动态，助力科学决策与声誉管理。",
+                icon: "白杨舆情系统-logo.svg",
+                link: "https://mcc.cuc.edu.cn/xby/login.html"
+            },
+            {
+                id: 2,
+                name: "问道中传",
+                desc: "智能对话、知识问答，中传专属AI助手。",
+                icon: "问道中传-logo.png",
+                link: "https://aihub.cuc.edu.cn/?code=R0xTb8He3cub50Doixhk57okFBL0D07jJDvCFbW9znRjbBKIJVNUz6jTgSvUXDbVrVUPcsC4VUDMYaLvg3eDWiJJsJGUgq0r0bHN7JY0OqL7VCnNVk1aAKGRWYzfkgxt&state=UwiM7K&sid=F66B4D49EA2DF8FC847D05136B8E0E88#/robot/zcDialogue?id=65eafbc5b9f941d29d47706880cb1c73"
+            },
+            {
+                id: 3,
+                name: "Meltwater融文平台",
+                desc: "全球新闻监测与分析，洞察趋势，赋能传播决策。",
+                icon: "mw_logo.svg",
+                link: "https://www.meltwater.cn/"
+            },
+            {
+                id: 4,
+                name: "系统4",
+                desc: "简要介绍，描述该系统的功能与主要用途。",
+                icon: "",
+                link: ""
+            },
+            {
+                id: 5,
+                name: "系统5",
+                desc: "简要介绍，描述该系统的功能与主要用途。",
+                icon: "",
+                link: ""
+            },
+            {
+                id: 6,
+                name: "系统6",
+                desc: "简要介绍，描述该系统的功能与主要用途。",
+                icon: "",
+                link: ""
+            }
+        ];
+
+        // 渲染卡片
+        function renderCards() {
+            const grid = document.getElementById("cardGrid");
+            grid.innerHTML = systems.map(s => {
+                const iconHtml = s.icon
+                    ? `<div class="card-icon"><img src="${s.icon}" alt="${s.name}"></div>`
+                    : `<div class="card-icon empty"></div>`;
+
+                if (s.link) {
+                    return `
+            <a href="${s.link}" class="card" target="_blank" rel="noopener">
+              ${iconHtml}
+              <h3>${s.name}</h3>
+              <p>${s.desc}</p>
+            </a>`;
+                } else {
+                    return `
+            <div class="card">
+              ${iconHtml}
+              <h3>${s.name}</h3>
+              <p>${s.desc}</p>
+            </div>`;
+                }
+            }).join("");
+        }
+
+        // 渲染管理表格
+        function renderManageTable() {
+            const tbody = document.getElementById("manageTableBody");
+            tbody.innerHTML = systems.map((s, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${s.name}</td>
+          <td>${s.desc}</td>
+          <td><button class="btn-delete" onclick="deleteSystem(${s.id})">删除</button></td>
+        </tr>
+      `).join("");
+        }
+
+        function openManageModal() {
+            renderManageTable();
+            document.getElementById("manageModal").classList.add("show");
+        }
+
+        function closeManageModal() {
+            document.getElementById("manageModal").classList.remove("show");
+        }
+
+        function openAddModal() {
+            document.getElementById("addModal").classList.add("show");
+        }
+
+        function closeAddModal() {
+            document.getElementById("addModal").classList.remove("show");
+            document.getElementById("newName").value = "";
+            document.getElementById("newDesc").value = "";
+            document.getElementById("newIcon").value = "";
+            document.getElementById("newLink").value = "";
+        }
+
+        function addSystem() {
+            const name = document.getElementById("newName").value.trim();
+            const desc = document.getElementById("newDesc").value.trim();
+            const icon = document.getElementById("newIcon").value.trim();
+            const link = document.getElementById("newLink").value.trim();
+
+            if (!name) {
+                alert("请输入系统名称");
+                return;
+            }
+
+            const newId = systems.length ? Math.max(...systems.map(s => s.id)) + 1 : 1;
+            systems.push({
+                id: newId,
+                name,
+                desc: desc || "暂无简介",
+                icon: icon || "",
+                link: link || ""
+            });
+
+            renderCards();
+            closeAddModal();
+        }
+
+        function deleteSystem(id) {
+            if (confirm("确定要删除该系统吗？")) {
+                systems = systems.filter(s => s.id !== id);
+                renderCards();
+                renderManageTable();
+            }
+        }
+
+        // 初始化
+        renderCards();
+    </script>
+</body>
+
+</html>
